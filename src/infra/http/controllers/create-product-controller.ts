@@ -1,18 +1,15 @@
 import { Request, Response } from 'express';
-import { prisma } from '../../prisma';
+import { CreateProductUseCase } from '../../../core/create-product';
 
 export class CreateProductController {
   async handle(request: Request, reply: Response) {
     try {
       const { name, description, price } = request.body;
 
-      await prisma.product.create({
-        data: {
-          name,
-          description,
-          priceInCents: price * 100,
-        }
-      });
+      const createProduct = new CreateProductUseCase();
+      
+      await createProduct.execute({ name, description, price });
+
     
       reply.status(201).send();
     } catch (err) {
