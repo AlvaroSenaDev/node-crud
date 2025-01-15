@@ -1,10 +1,9 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from './infra/prisma';
 
 const app = express();
 app.use(express.json());
 
-const prisma = new PrismaClient();
 
 app.get('/', (req, res) => {
   res.json({ message: 'hello, world' })
