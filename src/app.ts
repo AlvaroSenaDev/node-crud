@@ -1,74 +1,31 @@
 import express from 'express';
-import { prisma } from './infra/prisma';
+import { CreateProductController } from './infra/http/controllers/create-product-controller';
+import { ListProductsController } from './infra/http/controllers/list-products-controller';
+import { UpdateProductController } from './infra/http/controllers/update-product-controller';
+import { DeleteProductController } from './infra/http/controllers/delete-product-controller';
+import { GetProductController } from './infra/http/controllers/get-product-controller';
 
 const app = express();
 app.use(express.json());
-
 
 app.get('/', (req, res) => {
   res.json({ message: 'hello, world' })
 });
 
-app.get('/api/v1/products', async (req, res) => {
-  const products = await prisma.product.findMany();
+const createProduct = new CreateProductController();
+const getProduct = new GetProductController();
+const listProducts = new ListProductsController();
+const updateProduct = new UpdateProductController();
+const deleteProduct = new DeleteProductController(); 
 
-  res.json({ products });
-});
+app.get('/api/v1/products', listProducts.handle);
 
-app.get('/api/v1/products/:id', async (req, res) => {
-  const { id } = req.params;
+app.get('/api/v1/products/:id', getProduct.handle);
 
-  const product = await prisma.product.findUnique({
-    where: {
-      id,
-    },
-  });
+app.post('/api/v1/products', createProduct.handle);
 
-  res.json({ product });
-});
+app.put('/api/v1/products/:id', updateProduct.handle);
 
-app.post('/api/v1/products', async (req, res) => {
-  const { name, description, price } = req.body;
-
-  await prisma.product.create({
-    data: {
-      name,
-      description,
-      priceInCents: price * 100,
-    }
-  });
-
-  res.status(201).send();
-});
-
-app.put('/api/v1/products/:id', async (req, res) => {
-  const { id } = req.params;
-  const { name, description, price } = await req.body;
-
-  await prisma.product.update({
-    where: {
-      id,
-    },
-    data: {
-      name,
-      description,
-      priceInCents: price * 100,
-    }
-  });
-
-  res.status(201).send();
-});
-
-app.delete('/api/v1/products/:id', async (req, res) => {
-  const { id } = req.params;
-
-  await prisma.product.delete({
-    where: {
-      id,
-    },
-  });
-
-  res.status(204).send();
-});
+app.delete('/api/v1/products/:id', deleteProduct.handle);
 
 app.listen(8080, () => console.log('Server is running on http://localhost:8080'));
