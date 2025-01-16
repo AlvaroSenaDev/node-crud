@@ -1,18 +1,16 @@
 import { Request, Response } from 'express';
-import { prisma } from '../../prisma';
+import { GetProductUseCase } from '../../../core/get-product';
 
 export class GetProductController {
   async handle(request: Request, reply: Response) {
     try {
       const { id } = request.params;
 
-      const product = await prisma.product.findUnique({
-        where: {
-          id,
-        },
-      });
+      const getProduct = new GetProductUseCase();
+      const product = await getProduct.execute({ id });
+
     
-      reply.json({ product });
+      reply.json(product);
     } catch (err) {
       reply.status(400).json(err);
     }

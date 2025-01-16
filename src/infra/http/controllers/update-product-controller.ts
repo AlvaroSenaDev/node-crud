@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../prisma';
+import { UpdateProductUseCase } from '../../../core/update-product';
 
 export class UpdateProductController {
   async handle(request: Request, reply: Response) {
@@ -7,16 +8,8 @@ export class UpdateProductController {
       const { id } = request.params;
       const { name, description, price } = await request.body;
     
-      await prisma.product.update({
-        where: {
-          id,
-        },
-        data: {
-          name,
-          description,
-          priceInCents: price * 100,
-        }
-      });
+      const updatedProduct = new UpdateProductUseCase();
+      await updatedProduct.execute({ id, name, description, price });
     
       reply.status(201).send();
     } catch (err) {
