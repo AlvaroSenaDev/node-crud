@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
 import { prisma } from '../infra/prisma';
+import { ResourceNotFoundError } from './errors/resource-not-found-error';
 
 export class GetProductUseCase {
   async execute({ id }: { id: string }) {
@@ -8,6 +8,10 @@ export class GetProductUseCase {
         id,
       },
     });
+
+    if (!product) {
+      throw new ResourceNotFoundError('Product not found');
+    }
 
     return {
       product,

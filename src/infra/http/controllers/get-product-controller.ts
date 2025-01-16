@@ -12,6 +12,7 @@ export class GetProductController {
     
       reply.json(product);
     } catch (err) {
+      console.log(err);
       reply.status(400).json(err);
     }
   }

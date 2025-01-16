@@ -9,4 +9,6 @@ app.get('/', (req, res) => {
   res.json({ message: 'hello, world' })
 });
 
-app.listen(8080, () => console.log('Server is running on http://localhost:8080'));
+const port = process.env.PORT || 8080;
+
+app.listen(port, () => console.log(`Server is running on http://localhost:${port}`));
